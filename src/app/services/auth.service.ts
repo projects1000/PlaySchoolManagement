@@ -122,7 +122,7 @@ export class AuthService {
       }),
       catchError(error => {
         console.error('🔐 Auth: Login error:', error);
-        return throwError(() => error);
+        return this.handleAuthError(error, 'Login');
       })
     );
   }
@@ -138,7 +138,7 @@ export class AuthService {
       }),
       catchError(error => {
         console.error('🔐 Auth: Signup error:', error);
-        return throwError(() => error);
+        return this.handleAuthError(error, 'Signup');
       })
     );
   }
@@ -154,7 +154,7 @@ export class AuthService {
       }),
       catchError(error => {
         console.error('🔐 Auth: Admin creation error:', error);
-        return throwError(() => error);
+        return this.handleAuthError(error, 'Create Admin');
       })
     );
   }
@@ -229,5 +229,39 @@ export class AuthService {
   // Check if user is parent
   isParent(): boolean {
     return this.hasRole('ROLE_PARENT');
+  }
+
+  // Enhanced error handler for CORS and connectivity issues
+  private handleAuthError(error: any, operation: string): Observable<never> {
+    let errorMessage = '';
+    
+    if (error.status === 0) {
+      // CORS or network error
+      if (error.error instanceof ProgressEvent) {
+        errorMessage = `🌐 Connection Issue: Unable to reach the backend server. This might be due to CORS configuration or network connectivity.`;
+      } else {
+        errorMessage = `🌐 Network Error: Cannot connect to authentication server.`;
+      }
+      
+      console.error(`🚨 CORS/Network Error in ${operation}:`, {
+        frontend: window.location.origin,
+        backend: this.envService.getApiUrl(),
+        error: error
+      });
+      
+    } else if (error.status >= 500) {
+      errorMessage = `🔧 Server Error: The backend server is experiencing issues. Please try again later.`;
+    } else if (error.status === 401) {
+      errorMessage = `🔐 Authentication Failed: Invalid credentials or session expired.`;
+    } else if (error.status === 403) {
+      errorMessage = `🚫 Access Denied: You don't have permission to access this resource.`;
+    } else {
+      errorMessage = error.error?.message || `❌ ${operation} failed. Please try again.`;
+    }
+
+    return throwError(() => ({
+      ...error,
+      userMessage: errorMessage
+    }));
   }
 }
