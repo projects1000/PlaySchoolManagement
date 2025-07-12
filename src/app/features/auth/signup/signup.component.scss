@@ -1,0 +1,288 @@
+.signup-container {
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  i {
+    font-size: 3rem;
+    color: #4caf50;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+.signup-form {
+  .form-section {
+    margin-bottom: 1.5rem;
+    
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 0 1rem 0;
+      color: #555;
+      font-size: 1rem;
+      font-weight: 500;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+
+      mat-icon {
+        font-size: 1.2rem;
+        color: #2196F3;
+      }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .half-width {
+    flex: 1;
+    margin-bottom: 1rem;
+
+    @media (max-width: 600px) {
+      width: 100%;
+      flex: none;
+    }
+  }
+
+  .mat-mdc-form-field {
+    margin-bottom: 1rem;
+  }
+}
+
+.password-strength {
+  margin: -0.5rem 0 1rem 0;
+  
+  .strength-bar {
+    width: 100%;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+
+    .strength-fill {
+      height: 100%;
+      transition: all 0.3s ease;
+      border-radius: 2px;
+    }
+  }
+
+  .strength-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+}
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #e8f5e8;
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  color: #2e7d32;
+  font-size: 0.9rem;
+
+  mat-icon {
+    font-size: 1.2rem;
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #ffebee;
+  border: 1px solid #f44336;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  color: #c62828;
+  font-size: 0.9rem;
+
+  mat-icon {
+    font-size: 1.2rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+
+  .signup-btn {
+    width: 100%;
+    height: 48px;
+    font-weight: 500;
+
+    mat-spinner {
+      margin-right: 0.5rem;
+    }
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .cancel-btn {
+    width: 100%;
+    height: 40px;
+  }
+}
+
+.signup-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+
+    button {
+      padding: 0;
+      min-width: auto;
+      font-weight: 500;
+    }
+  }
+}
+
+// Material Select customization
+.mat-mdc-select-panel {
+  .mat-mdc-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 600px) {
+  .signup-container {
+    padding: 1rem;
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+    max-height: 90vh;
+  }
+
+  .signup-header {
+    margin-bottom: 1.5rem;
+
+    i {
+      font-size: 2.5rem;
+    }
+  }
+
+  .form-section {
+    margin-bottom: 1rem;
+  }
+}
+
+// Custom scrollbar for container
+.signup-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.signup-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.signup-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.signup-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Loading State
+.mat-mdc-raised-button:disabled {
+  background-color: #e0e0e0 !important;
+  color: #9e9e9e !important;
+}
+
+// Custom Material Form Field Styling
+.mat-mdc-form-field {
+  &.mat-form-field-appearance-outline {
+    .mat-mdc-form-field-outline {
+      color: #ddd;
+    }
+
+    &.mat-focused .mat-mdc-form-field-outline-thick {
+      color: #2196F3;
+    }
+
+    &.mat-form-field-invalid .mat-mdc-form-field-outline-thick {
+      color: #f44336;
+    }
+  }
+}
+
+// Material Button Customizations
+.mat-mdc-raised-button {
+  &.mat-primary {
+    background-color: #4caf50;
+    color: white;
+
+    &:hover {
+      background-color: #45a049;
+    }
+  }
+}
+
+.mat-mdc-button {
+  &.mat-primary {
+    color: #4caf50;
+
+    &:hover {
+      background-color: rgba(76, 175, 80, 0.04);
+    }
+  }
+}

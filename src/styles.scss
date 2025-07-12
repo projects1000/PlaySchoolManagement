@@ -1,4 +1,25 @@
 /* Global Styles for PlaySchool Management PWA */
+
+// Angular Material Theme (Modern Syntax)
+@use '@angular/material' as mat;
+@include mat.core();
+
+// Define a custom theme
+$primary: mat.define-palette(mat.$blue-palette);
+$accent: mat.define-palette(mat.$orange-palette, A200, A100, A400);
+$warn: mat.define-palette(mat.$red-palette);
+
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  )
+));
+
+@include mat.all-component-themes($theme);
+
+// External CSS Libraries
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -428,6 +449,7 @@ a {
   input, select, textarea, button {
     font-size: 16px !important;
     -webkit-appearance: none;
+    appearance: none;
     border-radius: 0;
   }
 }
@@ -456,4 +478,71 @@ body, html {
   .app-header {
     padding-top: max(var(--safe-area-inset-top), 1rem);
   }
+}
+
+/* Material Design Customizations */
+.mat-mdc-form-field {
+  &.mat-form-field-appearance-outline {
+    .mat-mdc-form-field-outline {
+      color: rgba(0, 0, 0, 0.12);
+    }
+
+    &.mat-focused .mat-mdc-form-field-outline-thick {
+      color: mat.get-color-from-palette($primary, 500);
+    }
+
+    &.mat-form-field-invalid .mat-mdc-form-field-outline-thick {
+      color: mat.get-color-from-palette($warn, 500);
+    }
+  }
+
+  .mat-mdc-form-field-label {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  &.mat-focused .mat-mdc-form-field-label {
+    color: mat.get-color-from-palette($primary, 500);
+  }
+
+  &.mat-form-field-invalid .mat-mdc-form-field-label {
+    color: mat.get-color-from-palette($warn, 500);
+  }
+}
+
+.mat-mdc-raised-button {
+  &.mat-primary {
+    background-color: mat.get-color-from-palette($primary, 500);
+    color: white;
+  }
+
+  &.mat-accent {
+    background-color: mat.get-color-from-palette($accent, 500);
+    color: white;
+  }
+}
+
+.mat-mdc-button {
+  &.mat-primary {
+    color: mat.get-color-from-palette($primary, 500);
+  }
+}
+
+/* Material Dialog Customizations */
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: white;
+  --mdc-dialog-supporting-text-color: rgba(0, 0, 0, 0.87);
+  border-radius: 12px;
+}
+
+/* Material Select Customizations */
+.mat-mdc-select-panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Material Error Styling */
+.mat-mdc-form-field-error {
+  color: mat.get-color-from-palette($warn, 500);
+  font-size: 0.75rem;
 }
