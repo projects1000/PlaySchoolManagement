@@ -17,10 +17,17 @@ $theme: mat.define-light-theme((
   )
 ));
 
-@include mat.all-component-themes($theme);
+// Include only the Material components we need
+@include mat.button-theme($theme);
+@include mat.form-field-theme($theme);
+@include mat.input-theme($theme);
+@include mat.select-theme($theme);
+@include mat.dialog-theme($theme);
+@include mat.icon-theme($theme);
+@include mat.progress-spinner-theme($theme);
+@include mat.divider-theme($theme);
 
-// External CSS Libraries
-@import '~bootstrap/dist/css/bootstrap.min.css';
+// External CSS Libraries (optimized)
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 
 /* Reset and Base Styles */
