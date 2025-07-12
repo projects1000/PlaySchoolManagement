@@ -1,11 +1,15 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { SplashScreenComponent } from './shared/splash-screen/splash-screen.component';
 import { IosInstallPromptComponent } from './shared/ios-install-prompt/ios-install-prompt.component';
+
+// Feature Modules
+import { StudentsModule } from './features/students/students.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +19,9 @@ import { IosInstallPromptComponent } from './shared/ios-install-prompt/ios-insta
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
+    StudentsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
