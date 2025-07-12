@@ -11,11 +11,46 @@ import { environment } from '../../environments/environment';
 export class StudentService {
   private readonly API_URL = `${environment.apiUrl}/students`;
   
-  private httpOptions = {
-    headers: new HttpHeaders({
+  private getApiEndpoint(endpoint: string): string {
+    const isLocal = (environment as any).isLocal;
+    
+    if (isLocal) {
+      // Use public endpoints for local development
+      switch (endpoint) {
+        case '/':
+        case '/all':
+          return `${this.API_URL}/public/list`;
+        case '/count':
+          return `${this.API_URL}/public/count`;
+        case '/register':
+          return `${this.API_URL}/public/register`; // If you have public registration
+        case '/search':
+          return `${this.API_URL}/public/search`;
+        default:
+          return `${this.API_URL}${endpoint}`;
+      }
+    } else {
+      // Use protected endpoints for cloud/production
+      return `${this.API_URL}${endpoint}`;
+    }
+  }
+  
+  private getHttpOptions() {
+    const headers = new HttpHeaders({
       'Content-Type': 'application/json'
-    })
-  };
+    });
+
+    // Only add authentication for cloud/production environments
+    // Skip authentication for local development
+    if (!(environment as any).isLocal) {
+      const auth = (environment as any).auth;
+      if (auth) {
+        headers.set('Authorization', 'Basic ' + btoa(`${auth.username}:${auth.password}`));
+      }
+    }
+    
+    return { headers };
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +58,8 @@ export class StudentService {
    * Get all active students
    */
   getAllStudents(): Observable<StudentResponse[]> {
-    return this.http.get<StudentResponse[]>(this.API_URL, this.httpOptions)
+    const endpoint = this.getApiEndpoint('/');
+    return this.http.get<StudentResponse[]>(endpoint, this.getHttpOptions())
       .pipe(
         catchError(this.handleError)
       );
@@ -33,7 +69,7 @@ export class StudentService {
    * Get student by ID
    */
   getStudentById(id: number): Observable<StudentResponse> {
-    return this.http.get<StudentResponse>(`${this.API_URL}/${id}`, this.httpOptions)
+    return this.http.get<StudentResponse>(`${this.API_URL}/${id}`, this.getHttpOptions())
       .pipe(
         catchError(this.handleError)
       );
@@ -43,8 +79,14 @@ export class StudentService {
    * Register a new student
    */
   registerStudent(student: StudentRegistrationRequest): Observable<StudentResponse> {
-    return this.http.post<StudentResponse>(`${this.API_URL}/register`, student, this.httpOptions)
+    const endpoint = this.getApiEndpoint('/register');
+    console.log('📝 Registering student at:', endpoint);
+    return this.http.post<StudentResponse>(endpoint, student, this.getHttpOptions())
       .pipe(
+        map((response: StudentResponse) => {
+          console.log('✅ Student registered successfully:', response);
+          return response;
+        }),
         catchError(this.handleError)
       );
   }
@@ -53,7 +95,7 @@ export class StudentService {
    * Update existing student
    */
   updateStudent(id: number, student: StudentRegistrationRequest): Observable<StudentResponse> {
-    return this.http.put<StudentResponse>(`${this.API_URL}/${id}`, student, this.httpOptions)
+    return this.http.put<StudentResponse>(`${this.API_URL}/${id}`, student, this.getHttpOptions())
       .pipe(
         catchError(this.handleError)
       );
@@ -63,7 +105,7 @@ export class StudentService {
    * Delete/Deactivate student
    */
   deleteStudent(id: number): Observable<MessageResponse> {
-    return this.http.delete<MessageResponse>(`${this.API_URL}/${id}`, this.httpOptions)
+    return this.http.delete<MessageResponse>(`${this.API_URL}/${id}`, this.getHttpOptions())
       .pipe(
         catchError(this.handleError)
       );
@@ -73,7 +115,7 @@ export class StudentService {
    * Reactivate student
    */
   reactivateStudent(id: number): Observable<StudentResponse> {
-    return this.http.put<StudentResponse>(`${this.API_URL}/${id}/reactivate`, {}, this.httpOptions)
+    return this.http.put<StudentResponse>(`${this.API_URL}/${id}/reactivate`, {}, this.getHttpOptions())
       .pipe(
         catchError(this.handleError)
       );
@@ -84,7 +126,8 @@ export class StudentService {
    */
   searchStudents(name: string): Observable<StudentResponse[]> {
     const params = new HttpParams().set('name', name);
-    return this.http.get<StudentResponse[]>(`${this.API_URL}/search`, { ...this.httpOptions, params })
+    const endpoint = this.getApiEndpoint('/search');
+    return this.http.get<StudentResponse[]>(endpoint, { ...this.getHttpOptions(), params })
       .pipe(
         catchError(this.handleError)
       );
@@ -94,7 +137,7 @@ export class StudentService {
    * Get students by parent email
    */
   getStudentsByParentEmail(email: string): Observable<StudentResponse[]> {
-    return this.http.get<StudentResponse[]>(`${this.API_URL}/parent/${email}`, this.httpOptions)
+    return this.http.get<StudentResponse[]>(`${this.API_URL}/parent/${email}`, this.getHttpOptions())
       .pipe(
         catchError(this.handleError)
       );
@@ -104,8 +147,16 @@ export class StudentService {
    * Get total active students count
    */
   getTotalActiveStudents(): Observable<number> {
-    return this.http.get<number>(`${this.API_URL}/count`, this.httpOptions)
+    const endpoint = this.getApiEndpoint('/count');
+    console.log('🔢 Getting student count from:', endpoint);
+    return this.http.get<number>(endpoint, this.getHttpOptions())
       .pipe(
+        map((response: any) => {
+          // Handle case where backend returns an object instead of a number
+          const count = typeof response === 'number' ? response : (response.count || response.total || 0);
+          console.log('📊 Student count response:', response, '-> parsed count:', count);
+          return count;
+        }),
         catchError(this.handleError)
       );
   }

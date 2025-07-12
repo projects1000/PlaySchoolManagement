@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { SplashScreenComponent } from './shared/splash-screen/splash-screen.component';
 import { IosInstallPromptComponent } from './shared/ios-install-prompt/ios-install-prompt.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
 
 // Feature Modules
 import { StudentsModule } from './features/students/students.module';
@@ -15,7 +16,8 @@ import { StudentsModule } from './features/students/students.module';
   declarations: [
     AppComponent,
     SplashScreenComponent,
-    IosInstallPromptComponent
+    IosInstallPromptComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StudentResponse } from '../../../models/student.model';
+import { StudentService } from '../../../services/student.service';
 
 @Component({
   selector: 'app-student-management',
@@ -11,14 +12,16 @@ export class StudentManagementComponent implements OnInit {
   refreshList = false;
   selectedStudent: StudentResponse | null = null;
   
-  // Stats properties (you can connect these to your service)
+  // Stats properties
   totalStudents = 0;
   newStudentsThisMonth = 0;
   activeStudents = 0;
 
-  constructor() {}
+  constructor(private studentService: StudentService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadStats();
+  }
 
   showRegisterForm(): void {
     this.activeView = 'register';
@@ -29,10 +32,14 @@ export class StudentManagementComponent implements OnInit {
     this.activeView = 'list';
     this.selectedStudent = null;
     this.triggerListRefresh();
+    this.loadStats(); // Refresh stats when showing list
   }
 
   onStudentRegistered(student: StudentResponse): void {
     this.showStudentList();
+    this.triggerListRefresh(); // Trigger refresh after registration
+    this.loadStats(); // Refresh stats after registration
+    console.log('✅ Student registered, refreshing stats...');
   }
 
   onCancelRegistration(): void {
@@ -52,5 +59,25 @@ export class StudentManagementComponent implements OnInit {
 
   private triggerListRefresh(): void {
     this.refreshList = !this.refreshList;
+  }
+
+  loadStats(): void {
+    console.log('🔄 Loading student statistics...');
+    this.loadTotalStudents();
+    // You can add other stats loading here later
+  }
+
+  loadTotalStudents(): void {
+    this.studentService.getTotalActiveStudents().subscribe({
+      next: (count: number) => {
+        this.totalStudents = count;
+        this.activeStudents = count; // For now, assume all are active
+        console.log('📊 Updated total students count:', count);
+      },
+      error: (error: any) => {
+        console.error('❌ Failed to load student count:', error);
+        this.totalStudents = 0;
+      }
+    });
   }
 }

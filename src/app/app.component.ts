@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PwaService } from './core/services/pwa.service';
 import { OfflineService } from './core/services/offline.service';
+import { EnvironmentService } from './core/services/environment.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private pwaService: PwaService,
-    private offlineService: OfflineService
+    private offlineService: OfflineService,
+    public envService: EnvironmentService
   ) {}
 
   ngOnInit(): void {

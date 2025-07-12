@@ -44,7 +44,7 @@
   color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
-  top: 0;
+  top: 24px; // Account for environment indicator
   z-index: 100;
 }
 
@@ -210,6 +210,32 @@
   text-transform: uppercase;
   &.online { background: #4caf50; color: white; }
   &.offline { background: #ff9800; color: white; }
+}
+
+/* Environment Indicator */
+.env-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  padding: 4px 0;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+  .env-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    
+    i {
+      font-size: 11px;
+    }
+  }
 }
 
 /* iOS-specific PWA styles */

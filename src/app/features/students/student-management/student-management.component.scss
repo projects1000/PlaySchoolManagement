@@ -247,57 +247,58 @@
   }
 
   .quick-stats {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 1000;
+    position: static; // Remove fixed positioning
+    margin: 2rem 0; // Add margin instead of fixed positioning
+    margin-left: 0; // Extreme left alignment
 
     .stats-container {
       display: flex;
-      flex-direction: column;
+      flex-direction: row; // Horizontal layout
       gap: 1rem;
+      justify-content: flex-start; // Align to left
+      flex-wrap: wrap;
 
       .stat-item {
         background: white;
-        padding: 1rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 0.75rem; // Smaller padding
+        border-radius: 8px; // Smaller border radius
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         display: flex;
         align-items: center;
-        gap: 1rem;
-        min-width: 180px;
+        gap: 0.75rem; // Smaller gap
+        min-width: 140px; // Smaller width
         transition: all 0.3s ease;
 
         &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
         }
 
         .stat-icon {
-          width: 50px;
-          height: 50px;
+          width: 35px; // Smaller icon container
+          height: 35px; // Smaller icon container
           background: linear-gradient(135deg, #ff6b35, #f7931e);
           color: white;
-          border-radius: 12px;
+          border-radius: 8px; // Smaller border radius
           display: flex;
           align-items: center;
           justify-content: center;
 
           i {
-            font-size: 1.5rem;
+            font-size: 1rem; // Smaller icon size
           }
         }
 
         .stat-content {
           .stat-number {
-            font-size: 1.5rem;
+            font-size: 1.25rem; // Smaller number
             font-weight: 700;
             color: #2c3e50;
             line-height: 1;
           }
 
           .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem; // Smaller label
             color: #6c757d;
             margin-top: 0.25rem;
           }
@@ -306,12 +307,9 @@
     }
 
     @media (max-width: 1200px) {
-      position: static;
-      margin-top: 2rem;
-
       .stats-container {
         flex-direction: row;
-        justify-content: center;
+        justify-content: flex-start; // Keep left alignment
         flex-wrap: wrap;
       }
     }

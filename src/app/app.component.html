@@ -15,6 +15,14 @@
     </div>
   </div>
 
+  <!-- Environment Indicator -->
+  <div class="env-indicator" [style.background-color]="envService.getEnvironmentColor()">
+    <div class="env-content">
+      <i class="fas fa-server"></i>
+      <span class="env-text">{{ envService.getEnvironmentName() }} - {{ envService.getBackendStatus() }}</span>
+    </div>
+  </div>
+
   <!-- Main App Header -->
   <header class="app-header">
     <div class="header-content">
@@ -45,11 +53,10 @@
     </div>
   </header>
 
-  <!-- Main Content Area -->
   <main class="main-content">
     <div class="content-wrapper">
       <!-- Welcome section when no route is active -->
-      <div class="welcome-section" *ngIf="!hasActiveRoute()">
+      <!-- <div class="welcome-section" *ngIf="!hasActiveRoute()">
         <div class="welcome-content">
           <h2>Welcome to Educare Management System</h2>
           <p>Your comprehensive solution for managing PlaySchool operations efficiently with Educare.</p>
@@ -86,7 +93,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- Router Outlet for Feature Components -->
       <router-outlet></router-outlet>
