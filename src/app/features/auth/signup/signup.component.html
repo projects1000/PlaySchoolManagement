@@ -1,11 +1,11 @@
-<!-- Beautiful Bootstrap Modal Signup Dialog with working validations -->
+<!-- Beautiful Bootstrap Modal Signup Dialog with iOS-compatible height -->
 <div class="container-fluid">
   <div class="row justify-content-center">
     <div class="col-12">
-      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="max-height: 90vh; display: flex; flex-direction: column;">
 
-        <!-- Header -->
-        <div class="card-header bg-gradient text-white text-center position-relative p-3">
+        <!-- Header - Fixed at top -->
+        <div class="card-header bg-gradient text-white text-center position-relative p-3 flex-shrink-0">
           <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" (click)="onCancel()" aria-label="Close"></button>
           <div class="d-flex flex-column align-items-center">
             <i class="fas fa-graduation-cap fa-2x text-white mb-2"></i>
@@ -14,14 +14,22 @@
           </div>
         </div>
 
-        <!-- Body -->
-        <div class="card-body p-3" #scrollContainer>
+        <!-- Body - Scrollable content -->
+        <div class="card-body p-3 flex-grow-1 overflow-auto" #scrollContainer style="max-height: calc(90vh - 200px);">
           <form id="signupForm" [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
 
-            <!-- Error Alert -->
+            <!-- Error Alert with retry option -->
             <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center" role="alert">
               <i class="fas fa-exclamation-triangle me-2"></i>
-              <div>{{ errorMessage }}</div>
+              <div class="flex-grow-1">{{ errorMessage }}</div>
+              <button *ngIf="errorMessage.includes('Unable to connect') || errorMessage.includes('Server is starting')" 
+                      type="button" 
+                      class="btn btn-outline-danger btn-sm ms-2"
+                      (click)="onSubmitWithRetry()"
+                      [disabled]="isLoading">
+                <i class="fas fa-redo me-1"></i>
+                Retry
+              </button>
             </div>
 
             <!-- First Name -->
@@ -170,8 +178,8 @@
           </div>
         </div>
 
-        <!-- Footer -->
-        <div class="card-footer bg-primary bg-opacity-10 text-center border-0 py-4">
+        <!-- Footer - Fixed at bottom -->
+        <div class="card-footer bg-primary bg-opacity-10 text-center border-0 py-4 flex-shrink-0">
           
           <!-- Submit Button -->
           <button #submitButton class="btn btn-primary btn-sm px-4 py-2 mb-3 rounded-pill fw-semibold" type="submit" [disabled]="signupForm.invalid || isLoading" form="signupForm">
@@ -180,13 +188,19 @@
             {{ isLoading ? 'Creating Account...' : 'Create Account' }}
           </button>
           
-          <small class="text-muted d-block">Already have an account? 
-            <button type="button" 
-                    class="btn btn-link p-0 text-decoration-none fw-semibold" 
-                    style="vertical-align: baseline; font-size: inherit;"
-                    (click)="switchToLogin()">
-              Login here
-            </button>
+          <small class="text-muted d-block">
+            <div class="mb-1">Already have an account? 
+              <button type="button" 
+                      class="btn btn-link p-0 text-decoration-none fw-semibold" 
+                      style="vertical-align: baseline; font-size: inherit;"
+                      (click)="switchToLogin()">
+                Login here
+              </button>
+            </div>
+            <div class="text-info small" style="font-size: 0.75rem;">
+              <i class="fas fa-info-circle me-1"></i>
+              First-time server connection may take 30-60 seconds
+            </div>
           </small>
         </div>
 

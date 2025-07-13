@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
+import { EnvironmentService } from '../../../core/services/environment.service';
 import { SignupRequest } from '../../../models/auth.model';
 
 @Component({
@@ -35,6 +36,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private envService: EnvironmentService,
     private dialogRef: MatDialogRef<SignupComponent>
   ) {
     this.signupForm = this.createSignupForm();
@@ -268,91 +270,137 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  // Main submit method called by form
   onSubmit(): void {
-    console.log('🚀 Submit attempted');
-    console.log('Form valid:', this.signupForm.valid);
-    console.log('Form values:', this.signupForm.value);
-    console.log('Loading:', this.isLoading);
+    console.log('🚀 Form submitted');
+    this.onSubmitWithRetry();
+  }
+  private async wakeUpServer(): Promise<void> {
+    try {
+      console.log('🔄 Attempting to wake up server...');
+      const response = await fetch(`${this.envService.getApiUrl()}/health`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        console.log('✅ Server is awake');
+      } else {
+        console.log('⚠️ Server responded but may be starting up');
+      }
+    } catch (error) {
+      console.log('⚠️ Server is waking up, will retry signup');
+    }
+  }
+
+  // Add helper method to show server status
+  private showServerWakeupMessage(): void {
+    this.errorMessage = '☕ Server is waking up... This may take 30-60 seconds on the first request. Please wait...';
+  }
+
+  private clearMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.fieldErrors = {};
+  }
+
+  // Enhanced submit with server wakeup
+  async onSubmitWithRetry(): Promise<void> {
+    console.log('🚀 Submit with retry attempted');
     
-    // Temporarily bypass form validation for testing
     if (!this.isLoading) {
       if (!this.signupForm.valid) {
         console.log('❌ Form is invalid, showing errors:');
         this.checkFormStatus();
-        // Mark all fields as touched to show validation errors
         Object.keys(this.signupForm.controls).forEach(key => {
           this.signupForm.get(key)?.markAsTouched();
         });
-        
-        // Scroll to the first invalid field
         this.scrollToFirstInvalidField();
         return;
       }
       
       this.isLoading = true;
-      this.errorMessage = '';
-      this.successMessage = '';
-      this.fieldErrors = {}; // Clear field-specific errors
+      this.clearMessages();
+      this.showServerWakeupMessage();
 
-      const signupData: SignupRequest = {
-        username: this.signupForm.value.username.trim(),
-        email: this.signupForm.value.email.trim().toLowerCase(),
-        firstName: this.signupForm.value.firstName.trim(),
-        lastName: this.signupForm.value.lastName.trim(),
-        password: this.signupForm.value.password,
-        phoneNumber: this.signupForm.value.phoneNumber?.trim() || undefined,
-        role: [this.signupForm.value.role]
-      };
-
-      console.log('📤 Sending signup data:', signupData);
-
-      this.subscription.add(
-        this.authService.signup(signupData).subscribe({
-          next: (response: any) => {
-            console.log('✅ Signup successful:', response);
-            this.isLoading = false;
-            this.successMessage = response.message || 'Account created successfully! You can now sign in.';
-            
-            // Scroll to success message
-            this.scrollToSuccessMessage();
-            
-            // Auto-close dialog after 3 seconds (increased to give user time to read)
-            setTimeout(() => {
-              this.dialogRef.close({ success: true, message: this.successMessage });
-            }, 3000);
-          },
-          error: (error: any) => {
-            console.error('❌ Signup failed:', error);
-            this.isLoading = false;
-            
-            // Handle specific field errors (like username already taken)
-            if (error.status === 400 && error.error?.field) {
-              // Field-specific error
-              this.fieldErrors[error.error.field] = error.error.message || 'Invalid value';
-              this.errorMessage = ''; // Don't show general error
-              this.scrollToFieldError(error.error.field);
-            } else if (error.status === 400 && error.error?.message?.toLowerCase().includes('username')) {
-              // Username conflict error
-              this.fieldErrors['username'] = error.error.message || 'Username already taken';
-              this.errorMessage = ''; // Don't show general error
-              this.scrollToFieldError('username');
-            } else if (error.status === 400 && error.error?.message?.toLowerCase().includes('email')) {
-              // Email conflict error
-              this.fieldErrors['email'] = error.error.message || 'Email already registered';
-              this.errorMessage = ''; // Don't show general error
-              this.scrollToFieldError('email');
-            } else if (error.status === 400) {
-              // General validation error - keep showing at top for now
-              this.errorMessage = error.error?.message || 'Registration failed. Please check your information.';
-            } else if (error.status === 0) {
-              this.errorMessage = 'Unable to connect to server. Please check your connection.';
-            } else {
-              this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
-            }
-          }
-        })
-      );
+      // Try to wake up server first
+      await this.wakeUpServer();
+      
+      // Small delay to let server fully wake up
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      this.errorMessage = 'Creating your account...';
+      
+      // Now attempt the actual signup
+      this.performSignup();
     }
+  }
+
+  private performSignup(): void {
+    const signupData: SignupRequest = {
+      username: this.signupForm.value.username.trim(),
+      email: this.signupForm.value.email.trim().toLowerCase(),
+      firstName: this.signupForm.value.firstName.trim(),
+      lastName: this.signupForm.value.lastName.trim(),
+      password: this.signupForm.value.password,
+      phoneNumber: this.signupForm.value.phoneNumber?.trim() || undefined,
+      role: [this.signupForm.value.role]
+    };
+
+    console.log('📤 Sending signup data:', signupData);
+
+    this.subscription.add(
+      this.authService.signup(signupData).subscribe({
+        next: (response: any) => {
+          console.log('✅ Signup successful:', response);
+          this.isLoading = false;
+          this.successMessage = response.message || 'Account created successfully! You can now sign in.';
+          this.scrollToSuccessMessage();
+          setTimeout(() => {
+            this.dialogRef.close({ success: true, message: this.successMessage });
+          }, 3000);
+        },
+        error: (error: any) => {
+          console.error('❌ Signup failed:', error);
+          this.isLoading = false;
+          
+          // Handle different types of errors
+          if (error.status === 0) {
+            // Network error or CORS issue
+            this.errorMessage = 'Unable to connect to server. The server may be starting up or there may be a network issue. Please try again in a moment.';
+          } else if (error.status === 504) {
+            // Gateway timeout - server is probably sleeping
+            this.errorMessage = 'Server is starting up (this may take 30-60 seconds on first request). Please try again in a moment.';
+          } else if (error.status === 400 && error.error?.field) {
+            // Field-specific error
+            this.fieldErrors[error.error.field] = error.error.message || 'Invalid value';
+            this.errorMessage = ''; // Don't show general error
+            this.scrollToFieldError(error.error.field);
+          } else if (error.status === 400 && error.error?.message?.toLowerCase().includes('username')) {
+            // Username conflict error
+            this.fieldErrors['username'] = error.error.message || 'Username already taken';
+            this.errorMessage = ''; // Don't show general error
+            this.scrollToFieldError('username');
+          } else if (error.status === 400 && error.error?.message?.toLowerCase().includes('email')) {
+            // Email conflict error
+            this.fieldErrors['email'] = error.error.message || 'Email already registered';
+            this.errorMessage = ''; // Don't show general error
+            this.scrollToFieldError('email');
+          } else if (error.status === 400) {
+            // General validation error
+            this.errorMessage = error.error?.message || 'Registration failed. Please check your information.';
+          } else if (error.status === 500) {
+            // Server error
+            this.errorMessage = 'Server error occurred. Please try again later.';
+          } else {
+            // Unknown error
+            this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
+          }
+        }
+      })
+    );
   }
 
   getPasswordStrength(): string {

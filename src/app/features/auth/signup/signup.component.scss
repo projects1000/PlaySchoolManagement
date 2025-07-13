@@ -1,4 +1,4 @@
-/* Compact Professional Bootstrap Signup Modal */
+/* Compact Professional Bootstrap Signup Modal - iOS Compatible */
 
 // Custom Variables
 :root {
@@ -8,38 +8,60 @@
   --bs-secondary-rgb: 247, 147, 30;
 }
 
-// Main Container - Compact with Scrolling
+// Main Container - iOS Safe Area Compatible
 .container-fluid {
   padding: 0;
   margin: 0;
-  max-width: 400px; // Further reduced from 450px to make it even narrower
-  max-height: 95vh; // Further increased from 90vh to make it even taller
+  max-width: 400px;
+  max-height: 85vh; // Reduced for iOS compatibility
   height: auto;
   display: flex;
   flex-direction: column;
+  
+  // iOS specific fixes
+  @supports (-webkit-touch-callout: none) {
+    // iOS Safari specific
+    max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 40px);
+    margin-top: env(safe-area-inset-top, 10px);
+    margin-bottom: env(safe-area-inset-bottom, 10px);
+  }
 }
 
 // Card Styling - Compact with Scroll
 .card {
   border: none !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-  display: flex;
-  flex-direction: column;
-  max-height: 95vh; // Further increased from 90vh to match container height
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 85vh; // iOS compatible height
+  height: auto;
+  overflow: hidden;
+  
+  // iOS specific card fixes
+  @supports (-webkit-touch-callout: none) {
+    max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 60px);
+  }
   
   .card-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
     background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%) !important;
     border: none;
     padding: 1rem 1.5rem 0.75rem !important;
+    flex-shrink: 0 !important;
     
     .btn-close-white {
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='m.234 1.047 5.578 5.656 5.578-5.656a.5.5 0 0 1 .708.708L6.44 7.313l5.658 5.657a.5.5 0 0 1-.708.708L5.734 8.02.076 13.677a.5.5 0 1 1-.708-.708L4.826 7.313-.532 1.657a.5.5 0 0 1 .708-.708z'/%3e%3c/svg%3e") !important;
-      opacity: 0.8;
-      transition: all 0.3s ease;
+      position: absolute !important;
+      top: 12px !important;
+      right: 12px !important;
+      z-index: 1001 !important;
       width: 24px;
       height: 24px;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='m.234 1.047 5.578 5.656 5.578-5.656a.5.5 0 0 1 .708.708L6.44 7.313l5.658 5.657a.5.5 0 0 1-.708.708L5.734 8.02.076 13.677a.5.5 0 1 1-.708-.708L4.826 7.313-.532 1.657a.5.5 0 0 1 .708-.708z'/%3e%3c/svg%3e") !important;
+      opacity: 0.9;
       
-      &:hover {
+      &:hover, &:focus {
         opacity: 1;
         transform: scale(1.1);
       }
@@ -62,11 +84,16 @@
   }
   
   .card-body {
-    padding: 1rem !important;
-    background: #ffffff;
-    overflow-y: auto; // Enable vertical scrolling
-    max-height: calc(95vh - 170px); // Increased space for footer (was 150px)
-    flex: 1; // Take remaining space
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important; // iOS smooth scrolling
+    max-height: calc(85vh - 160px) !important; // Account for header and footer
+    
+    // iOS specific body fixes
+    @supports (-webkit-touch-callout: none) {
+      max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 200px) !important;
+    }
     
     // Custom scrollbar styling
     &::-webkit-scrollbar {
@@ -113,6 +140,10 @@
   }
   
   .card-footer {
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 999 !important;
     background: #f8f9fa !important;
     border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
     padding: 1rem 1.5rem !important; // Increased from 0.75rem for better spacing
