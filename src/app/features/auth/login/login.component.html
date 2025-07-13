@@ -95,10 +95,10 @@
               </button>
             </div>
 
-            <!-- Submit Button with Bootstrap -->
-            <div class="d-grid gap-2 mb-2">
+            <!-- Submit Button with Bootstrap - Same style as signup -->
+            <div class="text-center mb-2">
               <button type="submit" 
-                      class="btn btn-primary rounded-pill py-2 fw-semibold"
+                      class="btn btn-primary btn-sm px-4 py-2 rounded-pill fw-semibold"
                       [disabled]="!loginForm.valid || isLoading">
                 <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 <i *ngIf="!isLoading" class="fas fa-sign-in-alt me-2"></i>

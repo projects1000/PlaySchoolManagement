@@ -16,7 +16,7 @@
 
         <!-- Body -->
         <div class="card-body p-3" #scrollContainer>
-          <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+          <form id="signupForm" [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
 
             <!-- Error Alert -->
             <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center" role="alert">
@@ -31,7 +31,8 @@
                      class="form-control" 
                      formControlName="firstName" 
                      placeholder="Enter first name"
-                     (keydown)="onFieldEnterKey($event)">
+                     (keydown)="onFieldEnterKey($event)"
+                     (blur)="onFieldBlur('firstName')">
               <small *ngIf="isFieldInvalid('firstName')" class="text-danger">{{ getFieldError('firstName') }}</small>
             </div>
 
@@ -42,7 +43,8 @@
                      class="form-control" 
                      formControlName="lastName" 
                      placeholder="Enter last name"
-                     (keydown)="onFieldEnterKey($event)">
+                     (keydown)="onFieldEnterKey($event)"
+                     (blur)="onFieldBlur('lastName')">
               <small *ngIf="isFieldInvalid('lastName')" class="text-danger">{{ getFieldError('lastName') }}</small>
             </div>
 
@@ -55,7 +57,8 @@
                      [class.is-valid]="!isFieldInvalid('email') && signupForm.get('email')?.touched && signupForm.get('email')?.value"
                      formControlName="email" 
                      placeholder="Enter email"
-                     (keydown)="onFieldEnterKey($event)">
+                     (keydown)="onFieldEnterKey($event)"
+                     (blur)="onFieldBlur('email')">
               <small *ngIf="isFieldInvalid('email')" class="text-danger">
                 <i class="fas fa-exclamation-triangle me-1"></i>{{ getFieldError('email') }}
               </small>
@@ -70,7 +73,8 @@
                      [class.is-valid]="!isFieldInvalid('username') && signupForm.get('username')?.touched && signupForm.get('username')?.value"
                      formControlName="username" 
                      placeholder="Choose username"
-                     (keydown)="onFieldEnterKey($event)">
+                     (keydown)="onFieldEnterKey($event)"
+                     (blur)="onFieldBlur('username')">
               <small *ngIf="isFieldInvalid('username')" class="text-danger">
                 <i class="fas fa-exclamation-triangle me-1"></i>{{ getFieldError('username') }}
               </small>
@@ -96,7 +100,9 @@
                        class="form-control" 
                        formControlName="password" 
                        placeholder="Create a password"
-                       (keydown)="onFieldEnterKey($event)">
+                       (keydown)="onFieldEnterKey($event)"
+                       (blur)="onFieldBlur('password')"
+                       (focus)="onFieldFocus('password')">
                 <button class="btn btn-outline-secondary" type="button" (click)="hidePassword = !hidePassword">
                   <i class="fas" [class.fa-eye]="hidePassword" [class.fa-eye-slash]="!hidePassword"></i>
                 </button>
@@ -113,7 +119,9 @@
                        class="form-control" 
                        formControlName="confirmPassword" 
                        placeholder="Confirm password"
-                       (keydown)="onLastFieldEnterKey($event)">
+                       (keydown)="onLastFieldEnterKey($event)"
+                       (blur)="onFieldBlur('confirmPassword')"
+                       (focus)="onFieldFocus('confirmPassword')">
                 <button class="btn btn-outline-secondary" type="button" (click)="hideConfirmPassword = !hideConfirmPassword">
                   <i class="fas" [class.fa-eye]="hideConfirmPassword" [class.fa-eye-slash]="!hideConfirmPassword"></i>
                 </button>
@@ -127,7 +135,8 @@
               <select class="form-select" 
                       id="role" 
                       formControlName="role"
-                      (keydown)="onFieldEnterKey($event)">
+                      (keydown)="onFieldEnterKey($event)"
+                      (focus)="onFieldFocus('role')">
                 <option *ngFor="let option of roleOptions" [value]="option.value">{{ option.label }}</option>
               </select>
               <small *ngIf="isFieldInvalid('role')" class="text-danger">{{ getFieldError('role') }}</small>
@@ -139,20 +148,15 @@
                      type="checkbox" 
                      id="agreeTerms" 
                      formControlName="agreeTerms"
-                     (keydown)="onLastFieldEnterKey($event)">
-              <label class="form-check-label" for="agreeTerms">
+                     (keydown)="onLastFieldEnterKey($event)"
+                     (focus)="onFieldFocus('agreeTerms')"
+                     style="border-color: #dc3545; border-width: 2px; background-color: transparent;">
+              <label class="form-check-label fw-semibold" for="agreeTerms" style="color: #8b4513;">
                 I agree to the Terms and Conditions
               </label>
               <br />
               <small *ngIf="isFieldInvalid('agreeTerms')" class="text-danger">{{ getFieldError('agreeTerms') }}</small>
             </div>
-
-            <!-- Submit -->
-            <button #submitButton class="btn btn-primary w-100" type="submit" [disabled]="signupForm.invalid || isLoading">
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-              <i *ngIf="!isLoading" class="fas fa-user-plus me-2"></i>
-              {{ isLoading ? 'Creating Account...' : 'Create Account' }}
-            </button>
 
           </form>
 
@@ -167,13 +171,21 @@
         </div>
 
         <!-- Footer -->
-        <div class="card-footer bg-light text-center border-0 py-2">
-          <small class="text-muted">Already have an account? 
+        <div class="card-footer bg-primary bg-opacity-10 text-center border-0 py-4">
+          
+          <!-- Submit Button -->
+          <button #submitButton class="btn btn-primary btn-sm px-4 py-2 mb-3 rounded-pill fw-semibold" type="submit" [disabled]="signupForm.invalid || isLoading" form="signupForm">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!isLoading" class="fas fa-user-plus me-2"></i>
+            {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+          </button>
+          
+          <small class="text-muted d-block">Already have an account? 
             <button type="button" 
-                    class="btn btn-link p-0 text-decoration-none" 
+                    class="btn btn-link p-0 text-decoration-none fw-semibold" 
                     style="vertical-align: baseline; font-size: inherit;"
                     (click)="switchToLogin()">
-              Login
+              Login here
             </button>
           </small>
         </div>

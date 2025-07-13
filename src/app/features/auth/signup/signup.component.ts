@@ -22,6 +22,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   hidePassword = true;
   hideConfirmPassword = true;
   showScrollHint = false;
+  private hasAutoScrolled = false; // Prevent multiple auto-scrolls
   private subscription = new Subscription();
 
   roleOptions = [
@@ -43,18 +44,20 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     // Component is ready
     console.log('🔐 Signup component initialized');
     
-    // Debug form validation - removed auto-scroll to prevent disruption while typing
+    // Debug form validation - focus on individual field progression
     this.signupForm.valueChanges.subscribe(() => {
       console.log('Form valid:', this.signupForm.valid);
       console.log('Form errors:', this.getFormValidationSummary());
-      console.log('Form values:', this.signupForm.value);
       
-      // Removed auto-scroll from here - will be triggered by Enter key instead
+      // Field value updated - no auto-scroll behavior
     });
   }
 
   ngAfterViewInit(): void {
-    // Check if content is scrollable after view init
+    // NO auto-scroll on load - let user see the form naturally
+    // Reset auto-scroll flag for fresh start
+    this.hasAutoScrolled = false;
+    
     setTimeout(() => {
       this.checkScrollable();
     }, 100);
@@ -62,6 +65,31 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  // Scroll to next field in the progression  
+  private scrollToNextField(fieldName: string): void {
+    const fieldElement = document.getElementById(fieldName);
+    if (fieldElement && this.scrollContainer) {
+      const containerElement = this.scrollContainer.nativeElement;
+      
+      // Calculate scroll position to show the next field with more space
+      const fieldTop = fieldElement.offsetTop;
+      const containerHeight = containerElement.clientHeight;
+      
+      // Scroll further to show more fields below - show field in top 20% instead of 30%
+      const scrollPosition = fieldTop - (containerHeight * 0.2); // Show field in top 20% of visible area
+      
+      // Add extra padding to scroll even more
+      const extraScroll = 80; // Additional pixels to scroll down
+      
+      containerElement.scrollTo({
+        top: Math.max(0, scrollPosition + extraScroll),
+        behavior: 'smooth'
+      });
+      
+      console.log(`📍 Scrolled further to show field: ${fieldName} with extra padding`);
+    }
   }
 
   // Check if we should auto-scroll (when most required fields are filled)
@@ -88,26 +116,40 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         const submitElement = this.submitButton.nativeElement;
         const containerElement = this.scrollContainer.nativeElement;
         
-        // Scroll the submit button into view with smooth animation
-        submitElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'nearest'
+        // Method 1: Scroll to bottom to ensure submit button is fully visible
+        const maxScroll = containerElement.scrollHeight - containerElement.clientHeight;
+        const aggressiveScroll = maxScroll * 0.9; // Scroll to 90% of maximum
+        
+        containerElement.scrollTo({
+          top: aggressiveScroll,
+          behavior: 'smooth'
         });
         
-        // Alternative method using container scroll
-        const submitRect = submitElement.getBoundingClientRect();
-        const containerRect = containerElement.getBoundingClientRect();
+        console.log(`📍 Aggressive scroll to submit button area: ${aggressiveScroll}px`);
         
-        if (submitRect.bottom > containerRect.bottom) {
-          const scrollTop = containerElement.scrollTop + (submitRect.bottom - containerRect.bottom) + 20;
+        // Method 2: Alternative approach - ensure submit button is in center of view
+        setTimeout(() => {
+          const submitTop = submitElement.offsetTop;
+          const containerHeight = containerElement.clientHeight;
+          const centerPosition = submitTop - (containerHeight * 0.3); // Show submit button in top 30%
+          
           containerElement.scrollTo({
-            top: scrollTop,
+            top: Math.max(0, centerPosition),
+            behavior: 'smooth'
+          });
+        }, 100);
+      } else {
+        // Fallback: scroll to bottom using querySelector
+        const container = document.querySelector('.card-body') as HTMLElement;
+        if (container) {
+          const maxScroll = container.scrollHeight - container.clientHeight;
+          container.scrollTo({
+            top: maxScroll,
             behavior: 'smooth'
           });
         }
       }
-    }, 100); // Small delay to ensure DOM is updated
+    }, 150); // Slightly longer delay
   }
 
   // Auto-scroll to success message
@@ -183,12 +225,15 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Checkbox value changed to:', value);
     });
 
-    // Clear field errors when user starts typing
+    // Clear field errors when user starts typing and check for auto-scroll
     Object.keys(form.controls).forEach(key => {
-      form.get(key)?.valueChanges.subscribe(() => {
+      form.get(key)?.valueChanges.subscribe((value) => {
         if (this.fieldErrors[key]) {
           delete this.fieldErrors[key];
         }
+        
+        // Check if all visible fields are filled to trigger auto-scroll
+        this.checkVisibleFieldsAndScroll();
       });
     });
 
@@ -238,6 +283,9 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         Object.keys(this.signupForm.controls).forEach(key => {
           this.signupForm.get(key)?.markAsTouched();
         });
+        
+        // Scroll to the first invalid field
+        this.scrollToFirstInvalidField();
         return;
       }
       
@@ -378,7 +426,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         return 'Passwords do not match';
       }
       if (field.errors['checkboxRequired']) {
-        return 'You must agree to the Terms and Conditions';
+        return '';
       }
     }
     return '';
@@ -546,6 +594,71 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('=========================');
   }
 
+  // Auto-scroll to the first invalid field
+  private scrollToFirstInvalidField(): void {
+    console.log('🔄 scrollToFirstInvalidField called');
+    
+    // Define field order to check for validation
+    const fieldOrder = ['firstName', 'lastName', 'email', 'username', 'phoneNumber', 'password', 'confirmPassword', 'role', 'agreeTerms'];
+    
+    for (const fieldName of fieldOrder) {
+      const field = this.signupForm.get(fieldName);
+      if (field && field.invalid && field.touched) {
+        console.log(`📍 Found first invalid field: ${fieldName}`);
+        this.scrollToFieldError(fieldName);
+        return;
+      }
+    }
+    
+    // If no invalid touched field found, find first invalid field regardless of touched state
+    for (const fieldName of fieldOrder) {
+      const field = this.signupForm.get(fieldName);
+      if (field && field.invalid) {
+        console.log(`📍 Found first invalid field (not touched): ${fieldName}`);
+        // Mark as touched to show error
+        field.markAsTouched();
+        this.scrollToFieldError(fieldName);
+        return;
+      }
+    }
+    
+    console.log('❌ No invalid fields found to scroll to');
+  }
+
+  // Check if all visible fields are filled and auto-scroll to show hidden fields
+  private checkVisibleFieldsAndScroll(): void {
+    // Only auto-scroll once
+    if (this.hasAutoScrolled) return;
+    
+    // Define which fields are typically visible on initial load (above the fold)
+    const visibleFields = ['firstName', 'lastName', 'email', 'username'];
+    
+    // Check if all visible fields have meaningful values
+    const allVisibleFieldsFilled = visibleFields.every(fieldName => {
+      const control = this.signupForm.get(fieldName);
+      return control && control.value && control.value.toString().trim().length > 0;
+    });
+    
+    if (allVisibleFieldsFilled && this.scrollContainer) {
+      console.log('📱 All visible fields filled - auto-scrolling to reveal hidden fields');
+      this.hasAutoScrolled = true; // Mark as scrolled
+      
+      setTimeout(() => {
+        const containerElement = this.scrollContainer.nativeElement;
+        
+        // Scroll down to reveal the password and lower fields
+        const scrollPosition = 280; // Enough to show password fields
+        
+        containerElement.scrollTo({
+          top: scrollPosition,
+          behavior: 'smooth'
+        });
+        
+        console.log('📍 Auto-scrolled to reveal hidden fields below');
+      }, 500); // Short delay after user finishes typing
+    }
+  }
+
   // Auto-scroll to field with error
   private scrollToFieldError(fieldName: string): void {
     setTimeout(() => {
@@ -591,6 +704,54 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 100); // Small delay to ensure DOM is updated and error is rendered
   }
 
+  // Real-time field validation with immediate feedback
+  validateFieldAndScroll(fieldName: string): void {
+    const field = this.signupForm.get(fieldName);
+    if (!field) return;
+
+    // Mark field as touched to show validation state
+    field.markAsTouched();
+    
+    // Check if field is invalid after user interaction
+    if (field.invalid) {
+      setTimeout(() => {
+        console.log(`⚠️ Field ${fieldName} is invalid, scrolling to show error`);
+        this.scrollToFieldError(fieldName);
+      }, 300); // Small delay to let user finish typing
+    }
+  }
+
+  // Enhanced scroll to field with better visual feedback
+  private scrollToFieldWithFeedback(fieldName: string): void {
+    const fieldElement = document.getElementById(fieldName) as HTMLInputElement;
+    if (fieldElement && this.scrollContainer) {
+      const containerElement = this.scrollContainer.nativeElement;
+      
+      // Scroll the field into view
+      fieldElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+      
+      // Focus the field for better UX
+      setTimeout(() => {
+        fieldElement.focus();
+        
+        // Add visual feedback
+        fieldElement.style.transition = 'all 0.3s ease';
+        fieldElement.style.borderColor = '#dc3545';
+        fieldElement.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+        
+        // Remove visual feedback after 3 seconds
+        setTimeout(() => {
+          fieldElement.style.borderColor = '';
+          fieldElement.style.boxShadow = '';
+        }, 3000);
+      }, 500);
+    }
+  }
+
   // Add method to handle Enter key press
   onFieldEnterKey(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
@@ -616,5 +777,61 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         this.scrollToSubmitButton();
       }
     }
+  }
+
+  // Handle field blur events for validation only - NO auto-scrolling
+  onFieldBlur(fieldName: string): void {
+    const field = this.signupForm.get(fieldName);
+    if (field) {
+      field.markAsTouched();
+      // Just mark as touched for validation display - no scrolling
+    }
+  }
+
+  // Handle field focus - only scroll when user manually reaches bottom fields
+  onFieldFocus(fieldName: string): void {
+    // Only scroll when user reaches the very last visible field (near bottom of container)
+    if (this.isLastVisibleField(fieldName)) {
+      setTimeout(() => {
+        this.scrollToRevealNext();
+      }, 300);
+    }
+  }
+
+  private isLastVisibleField(fieldName: string): boolean {
+    if (!this.scrollContainer) return false;
+    
+    const containerElement = this.scrollContainer.nativeElement;
+    const containerHeight = containerElement.clientHeight;
+    const scrollTop = containerElement.scrollTop;
+    const visibleBottom = scrollTop + containerHeight;
+    
+    // Find the field element
+    const fieldElement = containerElement.querySelector(`[formControlName="${fieldName}"]`) as HTMLElement;
+    if (!fieldElement) return false;
+    
+    const fieldTop = fieldElement.offsetTop;
+    const fieldHeight = fieldElement.offsetHeight;
+    const fieldBottom = fieldTop + fieldHeight;
+    
+    // Check if this field is in the bottom 30% of visible area
+    const bottomThreshold = visibleBottom - (containerHeight * 0.3);
+    
+    return fieldBottom >= bottomThreshold;
+  }
+
+  private scrollToRevealNext(): void {
+    if (!this.scrollContainer) return;
+    
+    const containerElement = this.scrollContainer.nativeElement;
+    const currentScrollTop = containerElement.scrollTop;
+    const scrollIncrement = 250; // Scroll down 250px to reveal next fields
+    
+    containerElement.scrollTo({
+      top: currentScrollTop + scrollIncrement,
+      behavior: 'smooth'
+    });
+    
+    console.log('� User reached bottom field - revealing next section');
   }
 }
