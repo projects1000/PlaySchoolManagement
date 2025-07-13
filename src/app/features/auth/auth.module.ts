@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
@@ -28,7 +29,8 @@ import { SignupComponent } from './signup/signup.component';
     MatIconModule,
     MatSelectModule,
     MatProgressSpinnerModule,
-    MatDividerModule
+    MatDividerModule,
+    MatCheckboxModule
   ],
   exports: [
     LoginComponent,

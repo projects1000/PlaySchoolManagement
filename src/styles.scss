@@ -28,6 +28,7 @@ $theme: mat.define-light-theme((
 @include mat.divider-theme($theme);
 
 // External CSS Libraries (optimized)
+@import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 
 /* Reset and Base Styles */
@@ -552,4 +553,32 @@ body, html {
 .mat-mdc-form-field-error {
   color: mat.get-color-from-palette($warn, 500);
   font-size: 0.75rem;
+}
+
+// Auth Dialog Global Styles
+.auth-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .mat-mdc-dialog-surface {
+    padding: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  }
+
+  // Responsive design for smaller screens
+  @media (max-width: 768px) {
+    .mat-mdc-dialog-container {
+      margin: 1rem;
+      max-width: calc(100vw - 2rem);
+      max-height: calc(100vh - 2rem);
+    }
+  }
 }

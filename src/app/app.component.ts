@@ -94,10 +94,12 @@ export class AppComponent implements OnInit, OnDestroy {
   // Authentication Methods
   openLoginDialog(): void {
     const dialogRef = this.dialog.open(LoginComponent, {
-      width: '450px',
+      width: '400px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       disableClose: false,
-      panelClass: 'auth-dialog'
+      panelClass: 'auth-dialog',
+      autoFocus: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -106,15 +108,17 @@ export class AppComponent implements OnInit, OnDestroy {
         this.showUserMenu = false;
         // Optionally navigate to dashboard
         this.router.navigate(['/dashboard']);
+      } else if (result?.action === 'switch-to-signup') {
+        this.openSignupDialog();
       }
     });
   }
 
   openSignupDialog(): void {
     const dialogRef = this.dialog.open(SignupComponent, {
-      width: '550px',
+      width: '400px', // Further reduced from 450px for narrower profile
       maxWidth: '90vw',
-      maxHeight: '85vh',
+      maxHeight: '98vh', // Further increased from 95vh for maximum height
       disableClose: false,
       panelClass: 'auth-dialog'
     });
@@ -126,6 +130,8 @@ export class AppComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.openLoginDialog();
         }, 500);
+      } else if (result?.action === 'switch-to-login') {
+        this.openLoginDialog();
       }
     });
   }

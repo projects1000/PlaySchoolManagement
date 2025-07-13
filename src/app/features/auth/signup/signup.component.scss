@@ -1,288 +1,497 @@
-.signup-container {
-  padding: 1.5rem;
-  max-width: 500px;
-  width: 100%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  max-height: 80vh;
-  overflow-y: auto;
+/* Compact Professional Bootstrap Signup Modal */
+
+// Custom Variables
+:root {
+  --bs-primary: #ff6b35;
+  --bs-primary-rgb: 255, 107, 53;
+  --bs-secondary: #f7931e;
+  --bs-secondary-rgb: 247, 147, 30;
 }
 
-.signup-header {
-  text-align: center;
-  margin-bottom: 2rem;
-
-  i {
-    font-size: 3rem;
-    color: #4caf50;
-    margin-bottom: 1rem;
-  }
-
-  h2 {
-    margin: 0 0 0.5rem 0;
-    color: #333;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0;
-    color: #666;
-    font-size: 0.9rem;
-  }
-}
-
-.signup-form {
-  .form-section {
-    margin-bottom: 1.5rem;
-    
-    h3 {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 0 0 1rem 0;
-      color: #555;
-      font-size: 1rem;
-      font-weight: 500;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 0.5rem;
-
-      mat-icon {
-        font-size: 1.2rem;
-        color: #2196F3;
-      }
-    }
-  }
-
-  .form-row {
-    display: flex;
-    gap: 1rem;
-
-    @media (max-width: 600px) {
-      flex-direction: column;
-      gap: 0;
-    }
-  }
-
-  .full-width {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-
-  .half-width {
-    flex: 1;
-    margin-bottom: 1rem;
-
-    @media (max-width: 600px) {
-      width: 100%;
-      flex: none;
-    }
-  }
-
-  .mat-mdc-form-field {
-    margin-bottom: 1rem;
-  }
-}
-
-.password-strength {
-  margin: -0.5rem 0 1rem 0;
-  
-  .strength-bar {
-    width: 100%;
-    height: 4px;
-    background: #eee;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 0.25rem;
-
-    .strength-fill {
-      height: 100%;
-      transition: all 0.3s ease;
-      border-radius: 2px;
-    }
-  }
-
-  .strength-text {
-    font-size: 0.75rem;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-}
-
-.success-message {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  background: #e8f5e8;
-  border: 1px solid #4caf50;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  color: #2e7d32;
-  font-size: 0.9rem;
-
-  mat-icon {
-    font-size: 1.2rem;
-  }
-}
-
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  background: #ffebee;
-  border: 1px solid #f44336;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  color: #c62828;
-  font-size: 0.9rem;
-
-  mat-icon {
-    font-size: 1.2rem;
-  }
-}
-
-.form-actions {
+// Main Container - Compact with Scrolling
+.container-fluid {
+  padding: 0;
+  margin: 0;
+  max-width: 400px; // Further reduced from 450px to make it even narrower
+  max-height: 95vh; // Further increased from 90vh to make it even taller
+  height: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+}
 
-  .signup-btn {
-    width: 100%;
-    height: 48px;
-    font-weight: 500;
-
-    mat-spinner {
-      margin-right: 0.5rem;
+// Card Styling - Compact with Scroll
+.card {
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  display: flex;
+  flex-direction: column;
+  max-height: 95vh; // Further increased from 90vh to match container height
+  
+  .card-header {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%) !important;
+    border: none;
+    padding: 1rem 1.5rem 0.75rem !important;
+    
+    .btn-close-white {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='m.234 1.047 5.578 5.656 5.578-5.656a.5.5 0 0 1 .708.708L6.44 7.313l5.658 5.657a.5.5 0 0 1-.708.708L5.734 8.02.076 13.677a.5.5 0 1 1-.708-.708L4.826 7.313-.532 1.657a.5.5 0 0 1 .708-.708z'/%3e%3c/svg%3e") !important;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      width: 24px;
+      height: 24px;
+      
+      &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
     }
-
-    mat-icon {
-      margin-right: 0.5rem;
+    
+    h3 {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 1.5rem !important;
+      margin-bottom: 0.5rem !important;
+    }
+    
+    p {
+      font-size: 0.85rem !important;
+      opacity: 0.9;
+    }
+    
+    i.fa-graduation-cap {
+      font-size: 2rem !important;
     }
   }
-
-  .cancel-btn {
-    width: 100%;
-    height: 40px;
+  
+  .card-body {
+    padding: 1rem !important;
+    background: #ffffff;
+    overflow-y: auto; // Enable vertical scrolling
+    max-height: calc(95vh - 170px); // Increased space for footer (was 150px)
+    flex: 1; // Take remaining space
+    
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      width: 12px; // Increased from 6px to 12px for better visibility
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 6px; // Adjusted border radius to match new width
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+      border-radius: 6px; // Adjusted border radius to match new width
+      border: 2px solid #f1f1f1; // Add border for better definition
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #e55a2b 0%, #e0841a 100%);
+      border: 2px solid #e9ecef; // Darker border on hover
+    }
+    
+    // Scroll indicator styling
+    position: relative;
+    
+    // Gradient overlay to indicate more content below
+    &::after {
+      content: '';
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: linear-gradient(transparent, rgba(248, 249, 250, 0.8));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    // Show gradient when scrolled
+    &.has-scroll::after {
+      opacity: 1;
+    }
+  }
+  
+  .card-footer {
+    background: #f8f9fa !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+    padding: 1rem 1.5rem !important; // Increased from 0.75rem for better spacing
+    flex-shrink: 0; // Prevent footer from shrinking
+    margin-top: auto; // Push footer to bottom
   }
 }
 
-.signup-footer {
-  text-align: center;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-
-  p {
-    margin: 0;
-    color: #666;
+// Compact Form Styling
+.form-label {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  
+  i {
+    color: var(--bs-primary);
     font-size: 0.9rem;
-
-    button {
-      padding: 0;
-      min-width: auto;
-      font-weight: 500;
-    }
   }
 }
 
-// Material Select customization
-.mat-mdc-select-panel {
-  .mat-mdc-option {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    mat-icon {
-      margin-right: 0.5rem;
-    }
+// Compact Input Group Styling
+.input-group {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px !important;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 0.75rem;
+  
+  &:focus-within {
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15);
+    transform: translateY(-1px);
   }
-}
-
-// Responsive Design
-@media (max-width: 600px) {
-  .signup-container {
-    padding: 1rem;
-    margin: 0.5rem;
-    max-width: calc(100vw - 1rem);
-    max-height: 90vh;
-  }
-
-  .signup-header {
-    margin-bottom: 1.5rem;
-
+  
+  .input-group-text {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-right: none;
+    color: #6c757d;
+    padding: 0.6rem 0.75rem;
+    
     i {
-      font-size: 2.5rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
     }
   }
-
-  .form-section {
-    margin-bottom: 1rem;
-  }
-}
-
-// Custom scrollbar for container
-.signup-container::-webkit-scrollbar {
-  width: 4px;
-}
-
-.signup-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 2px;
-}
-
-.signup-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 2px;
-}
-
-.signup-container::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-// Loading State
-.mat-mdc-raised-button:disabled {
-  background-color: #e0e0e0 !important;
-  color: #9e9e9e !important;
-}
-
-// Custom Material Form Field Styling
-.mat-mdc-form-field {
-  &.mat-form-field-appearance-outline {
-    .mat-mdc-form-field-outline {
-      color: #ddd;
+  
+  .form-control {
+    border: 1px solid #e9ecef;
+    border-left: none;
+    background: #ffffff;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    
+    &:focus {
+      border-color: var(--bs-primary);
+      box-shadow: none;
     }
-
-    &.mat-focused .mat-mdc-form-field-outline-thick {
-      color: #2196F3;
+    
+    &.is-valid {
+      border-color: #28a745;
     }
-
-    &.mat-form-field-invalid .mat-mdc-form-field-outline-thick {
-      color: #f44336;
+    
+    &.is-invalid {
+      border-color: #dc3545;
+    }
+    
+    &::placeholder {
+      color: #adb5bd;
+      font-size: 0.85rem;
     }
   }
-}
-
-// Material Button Customizations
-.mat-mdc-raised-button {
-  &.mat-primary {
-    background-color: #4caf50;
-    color: white;
-
+  
+  .btn-outline-secondary {
+    border-left: none;
+    border-color: #e9ecef;
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 0.5rem 0.75rem;
+    
     &:hover {
-      background-color: #45a049;
+      background: #e9ecef;
+      border-color: #adb5bd;
+    }
+    
+    i {
+      font-size: 0.85rem;
     }
   }
 }
 
-.mat-mdc-button {
-  &.mat-primary {
-    color: #4caf50;
+// Compact Alert Styling
+.alert-danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%) !important;
+  border: 1px solid #f1aeb5 !important;
+  border-radius: 8px !important;
+  border-left: 4px solid #dc3545 !important;
+  padding: 0.75rem !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 1rem !important;
+}
 
-    &:hover {
-      background-color: rgba(76, 175, 80, 0.04);
+// Compact Button Styling
+.btn-primary {
+  background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-secondary) 100%) !important;
+  border: none !important;
+  box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3) !important;
+  transition: all 0.3s ease !important;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  
+  &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 15px rgba(255, 107, 53, 0.4) !important;
+  }
+  
+  &:disabled {
+    background: #6c757d !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.btn-outline-primary {
+  border: 2px solid var(--bs-primary) !important;
+  color: var(--bs-primary) !important;
+  background: transparent !important;
+  transition: all 0.3s ease !important;
+  padding: 0.5rem 1.25rem !important;
+  font-size: 0.85rem !important;
+  
+  &:hover {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-secondary) 100%) !important;
+    border-color: var(--bs-primary) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3);
+  }
+}
+
+// Compact Form Check Styling
+.form-check-input {
+  &:checked {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+  }
+}
+
+.form-check-label {
+  font-size: 0.85rem !important;
+}
+
+// Compact Development Card
+.bg-light {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  border-radius: 8px !important;
+}
+
+// Compact margin adjustments
+.mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem !important;
+}
+
+// Terms and conditions section
+.d-flex.justify-content-center {
+  margin-bottom: 0.75rem !important;
+  
+  .form-check-label {
+    font-size: 0.8rem;
+  }
+}
+
+// Submit button container
+.d-grid {
+  margin-bottom: 0.5rem !important;
+  margin-top: 0.75rem !important;
+}
+
+// Footer styling
+.card-footer {
+  .btn-outline-primary {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+}
+
+// Fix for footer button visibility and spacing
+.signup-footer-fix {
+  .card-footer {
+    padding: 1rem 1.5rem 1.25rem !important; // Extra bottom padding
+    min-height: 80px; // Minimum height to prevent cutting
+    
+    p.mb-1 {
+      margin-bottom: 0.75rem !important; // More space above button
     }
+    
+    .btn-outline-primary {
+      font-size: 0.85rem !important;
+      padding: 0.6rem 1.5rem !important; // Better padding for visibility
+      margin-top: 0.25rem;
+      min-height: 38px; // Ensure button has minimum height
+    }
+  }
+}
+
+// Apply fix to main card
+.card {
+  // Ensure footer has enough space
+  .card-footer {
+    min-height: 80px !important; // Force minimum height
+  }
+}
+
+// Form layout fix - Ensure submit button visibility
+form.needs-validation {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  
+  // Push submit button section to bottom with proper spacing
+  .d-grid {
+    margin-top: auto !important;
+    margin-bottom: 1rem !important;
+    padding-top: 0.5rem;
+    flex-shrink: 0; // Prevent compression
+  }
+  
+  // Terms section spacing
+  .d-flex.justify-content-center {
+    margin-bottom: 0.5rem !important;
+    flex-shrink: 0; // Prevent compression
+  }
+}
+
+// Ensure form fields container allows proper scrolling
+.card-body form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// Responsive Scrolling Adjustments
+@media (max-height: 700px) {
+  .container-fluid {
+    max-height: 98vh; // Further increased from 95vh for maximum height utilization
+  }
+  
+  .card {
+    max-height: 98vh;
+    
+    .card-body {
+      max-height: calc(98vh - 150px); // Adjusted for footer space
+    }
+  }
+}
+
+@media (max-height: 600px) {
+  .container-fluid {
+    max-height: 100vh; // Use full height on very small screens
+  }
+  
+  .card {
+    max-height: 100vh;
+    
+    .card-body {
+      max-height: calc(100vh - 130px); // More space for footer on small screens
+      padding: 0.75rem !important; // Reduce padding
+    }
+    
+    .card-header {
+      padding: 0.75rem 1.5rem 0.5rem !important; // Reduce header padding
+      
+      h3 {
+        font-size: 1.25rem !important; // Smaller title
+      }
+    }
+    
+    .card-footer {
+      padding: 0.75rem 1.5rem 1rem !important; // Increased bottom padding on small screens
+      min-height: 70px !important; // Ensure footer visibility
+    }
+  }
+}
+
+// Touch device scrolling improvements
+@media (hover: none) and (pointer: coarse) {
+  .card-body {
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+    scroll-behavior: smooth;
+    
+    // Larger scrollbar for touch devices
+    &::-webkit-scrollbar {
+      width: 16px; // Even wider for touch devices (increased from 8px to 16px)
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 8px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+      border-radius: 8px;
+      border: 3px solid #f1f1f1; // Thicker border for touch
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #e55a2b 0%, #e0841a 100%);
+      border: 3px solid #e9ecef;
+    }
+  }
+}
+
+// Compact margin adjustments
+.mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem !important;
+}
+
+// Terms and conditions section
+.d-flex.justify-content-center {
+  margin-bottom: 0.75rem !important;
+  
+  .form-check-label {
+    font-size: 0.8rem;
+  }
+}
+
+// Submit button container
+.d-grid {
+  margin-bottom: 0.5rem !important;
+  margin-top: 0.75rem !important;
+}
+
+// Footer styling
+.card-footer {
+  .btn-outline-primary {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+}
+
+// Visual scroll hint
+.scroll-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #6c757d;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 10;
+  
+  i {
+    animation: bounce 1.5s infinite;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-1px);
   }
 }

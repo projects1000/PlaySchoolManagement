@@ -1,205 +1,184 @@
-<div class="signup-container">
-  <div class="signup-header">
-    <i class="fas fa-user-plus"></i>
-    <h2>Join Educare</h2>
-    <p>Create your account to access the PlaySchool Management System</p>
-  </div>
+<!-- Beautiful Bootstrap Modal Signup Dialog with working validations -->
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
 
-  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
-    
-    <!-- Personal Information Section -->
-    <div class="form-section">
-      <h3><mat-icon>person</mat-icon> Personal Information</h3>
-      
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="half-width">
-          <mat-label>First Name</mat-label>
-          <input matInput
-                 type="text"
-                 formControlName="firstName"
-                 placeholder="Enter first name"
-                 autocomplete="given-name">
-          <mat-icon matSuffix>person</mat-icon>
-          <mat-error *ngIf="isFieldInvalid('firstName')">
-            {{ getFieldError('firstName') }}
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="half-width">
-          <mat-label>Last Name</mat-label>
-          <input matInput
-                 type="text"
-                 formControlName="lastName"
-                 placeholder="Enter last name"
-                 autocomplete="family-name">
-          <mat-icon matSuffix>person</mat-icon>
-          <mat-error *ngIf="isFieldInvalid('lastName')">
-            {{ getFieldError('lastName') }}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email Address</mat-label>
-        <input matInput
-               type="email"
-               formControlName="email"
-               placeholder="Enter email address"
-               autocomplete="email">
-        <mat-icon matSuffix>email</mat-icon>
-        <mat-error *ngIf="isFieldInvalid('email')">
-          {{ getFieldError('email') }}
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Phone Number (Optional)</mat-label>
-        <input matInput
-               type="tel"
-               formControlName="phoneNumber"
-               placeholder="Enter phone number"
-               autocomplete="tel">
-        <mat-icon matSuffix>phone</mat-icon>
-        <mat-error *ngIf="isFieldInvalid('phoneNumber')">
-          {{ getFieldError('phoneNumber') }}
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- Account Information Section -->
-    <div class="form-section">
-      <h3><mat-icon>account_circle</mat-icon> Account Information</h3>
-      
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Username</mat-label>
-        <input matInput
-               type="text"
-               formControlName="username"
-               placeholder="Choose a username"
-               autocomplete="username">
-        <mat-icon matSuffix>account_circle</mat-icon>
-        <mat-error *ngIf="isFieldInvalid('username')">
-          {{ getFieldError('username') }}
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Role</mat-label>
-        <mat-select formControlName="role">
-          <mat-option *ngFor="let role of roleOptions" [value]="role.value">
-            <mat-icon>{{ role.icon }}</mat-icon>
-            {{ role.label }}
-          </mat-option>
-        </mat-select>
-        <mat-icon matSuffix>work</mat-icon>
-      </mat-form-field>
-    </div>
-
-    <!-- Password Section -->
-    <div class="form-section">
-      <h3><mat-icon>lock</mat-icon> Security</h3>
-      
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
-        <input matInput
-               [type]="hidePassword ? 'password' : 'text'"
-               formControlName="password"
-               placeholder="Create a password"
-               autocomplete="new-password">
-        <button mat-icon-button matSuffix
-                type="button"
-                (click)="hidePassword = !hidePassword">
-          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-        </button>
-        <mat-error *ngIf="isFieldInvalid('password')">
-          {{ getFieldError('password') }}
-        </mat-error>
-      </mat-form-field>
-
-      <!-- Password Strength Indicator -->
-      <div class="password-strength" *ngIf="signupForm.get('password')?.value">
-        <div class="strength-bar">
-          <div class="strength-fill" 
-               [style.width]="getPasswordStrength() === 'weak' ? '33%' : getPasswordStrength() === 'medium' ? '66%' : '100%'"
-               [style.background-color]="getPasswordStrengthColor()">
+        <!-- Header -->
+        <div class="card-header bg-gradient text-white text-center position-relative p-3">
+          <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" (click)="onCancel()" aria-label="Close"></button>
+          <div class="d-flex flex-column align-items-center">
+            <i class="fas fa-graduation-cap fa-2x text-white mb-2"></i>
+            <h3 class="fw-bold mb-1">Join Educare</h3>
+            <p class="mb-0 opacity-75 small">Create your account</p>
           </div>
         </div>
-        <span class="strength-text" [style.color]="getPasswordStrengthColor()">
-          {{ getPasswordStrength() | titlecase }} Password
-        </span>
+
+        <!-- Body -->
+        <div class="card-body p-3" #scrollContainer>
+          <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+
+            <!-- Error Alert -->
+            <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center" role="alert">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <div>{{ errorMessage }}</div>
+            </div>
+
+            <!-- First Name -->
+            <div class="mb-2">
+              <label for="firstName" class="form-label fw-semibold">First Name</label>
+              <input id="firstName" 
+                     class="form-control" 
+                     formControlName="firstName" 
+                     placeholder="Enter first name"
+                     (keydown)="onFieldEnterKey($event)">
+              <small *ngIf="isFieldInvalid('firstName')" class="text-danger">{{ getFieldError('firstName') }}</small>
+            </div>
+
+            <!-- Last Name -->
+            <div class="mb-2">
+              <label for="lastName" class="form-label fw-semibold">Last Name</label>
+              <input id="lastName" 
+                     class="form-control" 
+                     formControlName="lastName" 
+                     placeholder="Enter last name"
+                     (keydown)="onFieldEnterKey($event)">
+              <small *ngIf="isFieldInvalid('lastName')" class="text-danger">{{ getFieldError('lastName') }}</small>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-2">
+              <label for="email" class="form-label fw-semibold">Email</label>
+              <input id="email" 
+                     class="form-control" 
+                     [class.is-invalid]="isFieldInvalid('email')"
+                     [class.is-valid]="!isFieldInvalid('email') && signupForm.get('email')?.touched && signupForm.get('email')?.value"
+                     formControlName="email" 
+                     placeholder="Enter email"
+                     (keydown)="onFieldEnterKey($event)">
+              <small *ngIf="isFieldInvalid('email')" class="text-danger">
+                <i class="fas fa-exclamation-triangle me-1"></i>{{ getFieldError('email') }}
+              </small>
+            </div>
+
+            <!-- Username -->
+            <div class="mb-2">
+              <label for="username" class="form-label fw-semibold">Username</label>
+              <input id="username" 
+                     class="form-control" 
+                     [class.is-invalid]="isFieldInvalid('username')"
+                     [class.is-valid]="!isFieldInvalid('username') && signupForm.get('username')?.touched && signupForm.get('username')?.value"
+                     formControlName="username" 
+                     placeholder="Choose username"
+                     (keydown)="onFieldEnterKey($event)">
+              <small *ngIf="isFieldInvalid('username')" class="text-danger">
+                <i class="fas fa-exclamation-triangle me-1"></i>{{ getFieldError('username') }}
+              </small>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-2">
+              <label for="phoneNumber" class="form-label fw-semibold">Phone Number (optional)</label>
+              <input id="phoneNumber" 
+                     class="form-control" 
+                     formControlName="phoneNumber" 
+                     placeholder="Enter phone number"
+                     (keydown)="onFieldEnterKey($event)">
+              <small *ngIf="isFieldInvalid('phoneNumber')" class="text-danger">{{ getFieldError('phoneNumber') }}</small>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-2">
+              <label for="password" class="form-label fw-semibold">Password</label>
+              <div class="input-group">
+                <input [type]="hidePassword ? 'password' : 'text'" 
+                       id="password" 
+                       class="form-control" 
+                       formControlName="password" 
+                       placeholder="Create a password"
+                       (keydown)="onFieldEnterKey($event)">
+                <button class="btn btn-outline-secondary" type="button" (click)="hidePassword = !hidePassword">
+                  <i class="fas" [class.fa-eye]="hidePassword" [class.fa-eye-slash]="!hidePassword"></i>
+                </button>
+              </div>
+              <small *ngIf="isFieldInvalid('password')" class="text-danger">{{ getFieldError('password') }}</small>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-2">
+              <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+              <div class="input-group">
+                <input [type]="hideConfirmPassword ? 'password' : 'text'" 
+                       id="confirmPassword" 
+                       class="form-control" 
+                       formControlName="confirmPassword" 
+                       placeholder="Confirm password"
+                       (keydown)="onLastFieldEnterKey($event)">
+                <button class="btn btn-outline-secondary" type="button" (click)="hideConfirmPassword = !hideConfirmPassword">
+                  <i class="fas" [class.fa-eye]="hideConfirmPassword" [class.fa-eye-slash]="!hideConfirmPassword"></i>
+                </button>
+              </div>
+              <small *ngIf="isFieldInvalid('confirmPassword')" class="text-danger">{{ getFieldError('confirmPassword') }}</small>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-2">
+              <label for="role" class="form-label fw-semibold">Role</label>
+              <select class="form-select" 
+                      id="role" 
+                      formControlName="role"
+                      (keydown)="onFieldEnterKey($event)">
+                <option *ngFor="let option of roleOptions" [value]="option.value">{{ option.label }}</option>
+              </select>
+              <small *ngIf="isFieldInvalid('role')" class="text-danger">{{ getFieldError('role') }}</small>
+            </div>
+
+            <!-- Terms -->
+            <div class="form-check mb-3">
+              <input class="form-check-input" 
+                     type="checkbox" 
+                     id="agreeTerms" 
+                     formControlName="agreeTerms"
+                     (keydown)="onLastFieldEnterKey($event)">
+              <label class="form-check-label" for="agreeTerms">
+                I agree to the Terms and Conditions
+              </label>
+              <br />
+              <small *ngIf="isFieldInvalid('agreeTerms')" class="text-danger">{{ getFieldError('agreeTerms') }}</small>
+            </div>
+
+            <!-- Submit -->
+            <button #submitButton class="btn btn-primary w-100" type="submit" [disabled]="signupForm.invalid || isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!isLoading" class="fas fa-user-plus me-2"></i>
+              {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+            </button>
+
+          </form>
+
+          <!-- Success Message at Bottom -->
+          <div *ngIf="successMessage" 
+               id="successMessage"
+               class="alert alert-success d-flex align-items-center mt-3" 
+               role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <div>{{ successMessage }}</div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer bg-light text-center border-0 py-2">
+          <small class="text-muted">Already have an account? 
+            <button type="button" 
+                    class="btn btn-link p-0 text-decoration-none" 
+                    style="vertical-align: baseline; font-size: inherit;"
+                    (click)="switchToLogin()">
+              Login
+            </button>
+          </small>
+        </div>
+
       </div>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Confirm Password</mat-label>
-        <input matInput
-               [type]="hideConfirmPassword ? 'password' : 'text'"
-               formControlName="confirmPassword"
-               placeholder="Confirm your password"
-               autocomplete="new-password">
-        <button mat-icon-button matSuffix
-                type="button"
-                (click)="hideConfirmPassword = !hideConfirmPassword">
-          <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-        </button>
-        <mat-error *ngIf="isFieldInvalid('confirmPassword')">
-          {{ getFieldError('confirmPassword') }}
-        </mat-error>
-      </mat-form-field>
     </div>
-
-    <!-- Success Message -->
-    <div class="success-message" *ngIf="successMessage">
-      <mat-icon>check_circle</mat-icon>
-      <span>{{ successMessage }}</span>
-    </div>
-
-    <!-- Error Message -->
-    <div class="error-message" *ngIf="errorMessage">
-      <mat-icon>error</mat-icon>
-      <span>{{ errorMessage }}</span>
-    </div>
-
-    <!-- Debug Information -->
-    <div class="debug-section" *ngIf="!signupForm.valid" style="background: #f5f5f5; padding: 1rem; margin: 1rem 0; border-radius: 4px; font-size: 0.8rem;">
-      <strong>Form Status:</strong> {{ formDebugInfo }}
-      <br>
-      <button type="button" (click)="checkFormValidity()" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-        Debug Form
-      </button>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="form-actions">
-      <button mat-raised-button
-              color="primary"
-              type="submit"
-              [disabled]="!signupForm.valid || isLoading"
-              class="signup-btn"
-              [title]="signupForm.valid ? 'Create your account' : 'Please fill all required fields correctly'">
-        <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
-        <span *ngIf="!isLoading">
-          <mat-icon>person_add</mat-icon>
-          Create Account
-        </span>
-        <span *ngIf="isLoading">Creating Account...</span>
-      </button>
-
-      <button mat-button
-              type="button"
-              (click)="onCancel()"
-              [disabled]="isLoading"
-              class="cancel-btn">
-        Cancel
-      </button>
-    </div>
-  </form>
-
-  <!-- Additional Information -->
-  <div class="signup-footer">
-    <p>Already have an account? 
-      <button mat-button color="primary" (click)="onCancel()" [disabled]="isLoading">
-        Sign In Here
-      </button>
-    </p>
   </div>
 </div>
